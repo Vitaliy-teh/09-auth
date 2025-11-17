@@ -6,7 +6,6 @@ const initialDraft: NewNoteData = {
   title: "",
   content: "",
   tag: "Todo",
-  // categoryId: ""
 };
 
 type NoteDraftStore = {

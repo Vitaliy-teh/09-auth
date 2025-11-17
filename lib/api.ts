@@ -55,7 +55,6 @@ export interface NewNoteData {
   title: string;
   content: string;
   tag: Tag;
-  // categoryId: string;
 }
 
 export const createNote = async (note: NewNoteData): Promise<Note> => {
