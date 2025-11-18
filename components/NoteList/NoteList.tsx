@@ -3,7 +3,7 @@ import css from "./NoteList.module.css";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteNote } from "@/lib/api/clientApi";
 import { useState } from "react";
-import Link from "next/link"; // Виправлено імпорт
+import Link from "next/link";
 
 interface NoteListProps {
   notes: Note[];
@@ -28,7 +28,6 @@ const NoteList = ({ notes, onDelete }: NoteListProps) => {
     },
     onError: (err: Error) => {
       console.error("Failed to delete note:", err);
-      // Можна додати сповіщення для користувача
     },
   });
 
@@ -53,7 +52,7 @@ const NoteList = ({ notes, onDelete }: NoteListProps) => {
               <Link
                 className={css.details}
                 href={`/notes/${note.id}`}
-                prefetch={false} // Додано для оптимізації
+                prefetch={false}
               >
                 View details
               </Link>

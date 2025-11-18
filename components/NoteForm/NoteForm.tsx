@@ -2,7 +2,8 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { createNote, type NewNoteData } from "@/lib/api";
+import { createNote } from "@/lib/api/clientApi";
+import { NewNoteData } from "@/lib/api/api";
 import { useNoteDraftStore } from "@/lib/store/noteStore";
 import { Tag } from "@/types/note";
 import css from "./NoteForm.module.css";
@@ -56,7 +57,6 @@ export default function NoteForm() {
       title: values.title,
       content: values.content,
       tag: values.tag as Tag,
-      // categoryId: values.categoryId,
     };
     mutate(newNote);
   };

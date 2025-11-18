@@ -104,7 +104,6 @@ export default function NotesClient({ tag }: NotesClientProps) {
     setSearchText(newQuery);
   }, 300);
 
-  // Розрахунок пагінації
   const total = data?.total ?? 0;
   const perPage = data?.perPage ?? 12;
   const totalPages = Math.ceil(total / perPage);

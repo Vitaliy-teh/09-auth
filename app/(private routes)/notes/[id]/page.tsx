@@ -3,7 +3,7 @@ import {
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { fetchNoteById } from "@/lib/api";
+import { fetchServerNoteById } from "@/lib/api/serverApi";
 import NotePreviewClient from "@/app/@modal/(.)notes/[id]/NotePreview.client";
 import { Metadata } from "next";
 
@@ -13,26 +13,34 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const note = await fetchNoteById(id);
 
-  return {
-    title: `${note.title} | NoteHub`,
-    description: note.content.slice(0, 100) + "...",
-    openGraph: {
+  try {
+    const note = await fetchServerNoteById(id);
+
+    return {
       title: `${note.title} | NoteHub`,
       description: note.content.slice(0, 100) + "...",
-      url: `https://08-zustand-ruddy-theta.vercel.app/notes/${id}`,
-      images: [
-        {
-          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
-          width: 1200,
-          height: 630,
-          alt: note.title,
-        },
-      ],
-      type: "article",
-    },
-  };
+      openGraph: {
+        title: `${note.title} | NoteHub`,
+        description: note.content.slice(0, 100) + "...",
+        url: `https://08-zustand-ruddy-theta.vercel.app/notes/${id}`,
+        images: [
+          {
+            url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+            width: 1200,
+            height: 630,
+            alt: note.title,
+          },
+        ],
+        type: "article",
+      },
+    };
+  } catch (error) {
+    return {
+      title: "Note Not Found | NoteHub",
+      description: "The requested note could not be found.",
+    };
+  }
 }
 
 export default async function NoteDetailsPage({
@@ -44,10 +52,14 @@ export default async function NoteDetailsPage({
 
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery({
-    queryKey: ["note", id],
-    queryFn: () => fetchNoteById(id),
-  });
+  try {
+    await queryClient.prefetchQuery({
+      queryKey: ["note", id],
+      queryFn: () => fetchServerNoteById(id),
+    });
+  } catch (error) {
+    console.error("Failed to prefetch note:", error);
+  }
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

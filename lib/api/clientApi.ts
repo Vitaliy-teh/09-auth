@@ -2,7 +2,7 @@ import { nextServer, ApiError } from './api';
 import { User } from '@/types/user';
 import { Note, NoteListResponse } from '@/types/note';
 
-// Auth types
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -18,7 +18,7 @@ export interface UpdateUserRequest {
   avatar?: string;
 }
 
-// Auth functions
+
 export const register = async (data: RegisterRequest): Promise<User> => {
   const res = await nextServer.post<User>('/auth/register', data);
   return res.data;
@@ -38,33 +38,27 @@ export const checkSession = async (): Promise<boolean> => {
   return res.data.success;
 };
 
-// export const getMe = async (): Promise<User> => {
-//   const res = await nextServer.get<User>('/auth/me');
-//   return res.data;
-// };
-
-// export const updateMe = async (data: UpdateUserRequest): Promise<User> => {
-//   const res = await nextServer.patch<User>('/auth/me', data);
-//   return res.data;
-// };
-
 export const getMe = async (): Promise<User> => {
-  const res = await nextServer.get<User>('/users/me'); // ЗМІНА: /auth/me -> /users/me
+  const res = await nextServer.get<User>('/users/me');
   return res.data;
 };
 
 export const updateMe = async (data: UpdateUserRequest): Promise<User> => {
-  const res = await nextServer.patch<User>('/users/me', data); // ЗМІНА: /auth/me -> /users/me
+  const res = await nextServer.patch<User>('/users/me', data);
   return res.data;
 };
 
-// Notes functions
 export const fetchNotes = async (params?: {
   search?: string;
   page?: number;
   tag?: string;
 }): Promise<NoteListResponse> => {
-  const res = await nextServer.get<NoteListResponse>('/notes', { params });
+  const res = await nextServer.get<NoteListResponse>('/notes', { 
+    params: { 
+      ...params, 
+      perPage: 12 
+    } 
+  });
   return res.data;
 };
 
