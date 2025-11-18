@@ -1,4 +1,4 @@
-import { fetchNotes } from "@/lib/api";
+import { fetchServerNotes } from "@/lib/api/serverApi";
 import NotesClient from "./Notes.client";
 import type { Tag } from "@/types/note";
 import {
@@ -54,7 +54,7 @@ export default async function NotesPage({
 
   await queryClient.prefetchQuery({
     queryKey: ["notes", { searchQuery: "", currentPage: 1, tag }],
-    queryFn: () => fetchNotes({ tag }),
+    queryFn: () => fetchServerNotes({ tag }),
   });
 
   return (

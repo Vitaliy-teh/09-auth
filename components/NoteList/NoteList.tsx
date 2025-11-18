@@ -1,9 +1,9 @@
 import type { Note } from "@/types/note";
 import css from "./NoteList.module.css";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteNote } from "@/lib/api";
+import { deleteNote } from "@/lib/api/clientApi";
 import { useState } from "react";
-import Link from "next/dist/client/link";
+import Link from "next/link"; // Виправлено імпорт
 
 interface NoteListProps {
   notes: Note[];
@@ -14,7 +14,7 @@ const NoteList = ({ notes, onDelete }: NoteListProps) => {
   const queryClient = useQueryClient();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const mutation = useMutation<Note, Error, string>({
+  const mutation = useMutation({
     mutationFn: deleteNote,
     onMutate: (id: string) => {
       setDeletingId(id);
@@ -28,10 +28,17 @@ const NoteList = ({ notes, onDelete }: NoteListProps) => {
     },
     onError: (err: Error) => {
       console.error("Failed to delete note:", err);
+      // Можна додати сповіщення для користувача
     },
   });
 
   if (notes.length === 0) return null;
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this note?")) {
+      mutation.mutate(id);
+    }
+  };
 
   return (
     <ul className={css.list}>
@@ -46,14 +53,15 @@ const NoteList = ({ notes, onDelete }: NoteListProps) => {
               <Link
                 className={css.details}
                 href={`/notes/${note.id}`}
-                onClick={() => console.log("Opening note with ID:", note.id)}
+                prefetch={false} // Додано для оптимізації
               >
                 View details
               </Link>
               <button
-                className={css.button}
-                onClick={() => mutation.mutate(note.id)}
+                className={`${css.button} ${isDeleting ? css.deleting : ""}`}
+                onClick={() => handleDelete(note.id)}
                 disabled={isDeleting}
+                aria-label={isDeleting ? "Deleting note" : "Delete note"}
               >
                 {isDeleting ? "Deleting..." : "Delete"}
               </button>
