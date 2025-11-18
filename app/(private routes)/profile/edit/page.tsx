@@ -84,7 +84,7 @@ const EditProfile = () => {
             <button
               type="button"
               className={css.cancelButton}
-              onClick={() => router.back()}
+              onClick={handleCancel}
             >
               Cancel
             </button>
