@@ -3,7 +3,8 @@ import { nextServer } from './api';
 import { User } from '@/types/user';
 import { Note, NoteListResponse } from '@/types/note';
 
-export const checkServerSession = async (): Promise<{ success: boolean }> => {
+
+export const checkServerSession = async () => {
   const cookieStore = await cookies();
   try {
     const res = await nextServer.get('/auth/session', {
@@ -11,9 +12,14 @@ export const checkServerSession = async (): Promise<{ success: boolean }> => {
         Cookie: cookieStore.toString(),
       },
     });
-    return res.data;
+    
+    return res;
   } catch (error) {
-    return { success: false };
+    
+    return { 
+      data: { success: false },
+      headers: {}
+    } as any;
   }
 };
 
